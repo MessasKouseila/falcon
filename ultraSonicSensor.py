@@ -1,13 +1,14 @@
-import RPi.GPIO as GPIO                    
-import time                                
+import RPi.GPIO as GPIO
+import time
 from threading import Thread
 from observable import observable
+
 
 class UltraSonicSensor(Thread):
 
 	DISTANCE_DEFAULT = 25
-	TRIG = 18                                  #Associate gpio 24 to TRIG
-	ECHO = 16                                  #Associate gpio 23 to ECHO
+	TRIG = 18  # Associate gpio 24 to TRIG
+	ECHO = 16  # Associate gpio 23 to ECHO
 
     """Thread chargé simplement d'afficher une lettre dans la console."""
 	def __init__(self,trig,echo):
@@ -47,10 +48,3 @@ class UltraSonicSensor(Thread):
 		return self.distance
 	def clearDistance(self):
 		self.distance = DISTANCE_DEFAULT
-
-
-
-	
-        
-
-
