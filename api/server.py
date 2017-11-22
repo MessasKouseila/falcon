@@ -23,6 +23,7 @@ def getIp():
     s.close()
     return ip
 
+
 moteur = WheelEnum()
 # on recupere le repertoir courrant
 current_directory = os.getcwd()
@@ -41,9 +42,17 @@ def connexion():
 # fait avancé le robot pendant x secondes
 @app.route('/run/<time>')
 def run(time=1):
-    moteur.LEFT
-    
+    moteur.LEFT_DOWN.accelerate()
+    moteur.LEFT_UP.accelerate()
+    moteur.RIGHT_DOWN.accelerate()
+    moteur.RIGHT_UP.accelerate()
 
+    time.sleep(time)
+
+    moteur.LEFT_DOWN.brake()
+    moteur.LEFT_UP.brake()
+    moteur.RIGHT_DOWN.brake()
+    moteur.RIGHT_UP.brake()
 
 
 if __name__ == "__main__":
