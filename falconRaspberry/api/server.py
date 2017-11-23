@@ -12,8 +12,8 @@ import socket
 import time
 import datetime
 from datetime import timedelta
-from wheelEnum import WheelEnum
-from ultraSonicSensor import UltraSonicSensor
+from vehicle.wheelEnum import WheelEnum
+from sensor.ultraSonicSensor import UltraSonicSensor
 # renvoie l'ip sur lequel est executé le scripte.
 def getIp():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

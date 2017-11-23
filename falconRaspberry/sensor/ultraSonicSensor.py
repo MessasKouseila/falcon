@@ -7,8 +7,6 @@ from observable import Observable
 class UltraSonicSensor(Thread, Observable):
 
 	DISTANCE_DEFAULT = 5
-	TRIG = 18  # Associate gpio 24 to TRIG
-	ECHO = 16  # Associate gpio 23 to ECHO
 
 	def __init__(self, trig, echo):
 		Thread.__init__(self)
@@ -16,12 +14,13 @@ class UltraSonicSensor(Thread, Observable):
 		self.echo = echo
 		self.distance = UltraSonicSensor.DISTANCE_DEFAULT
 		Observable.__init__(self)
+        self.cont = True
 
 	def run(self):
 		GPIO.setmode(GPIO.BOARD)
 		GPIO.setup(self.trig, GPIO.OUT)  # Set pin as GPIO out
 		GPIO.setup(self.echo, GPIO.IN)
-		while True:
+		while self.cont:
 			GPIO.output(self.trig, False)  # Set TRIG as LOW
 			print "Waitng For Sensor To Settle"
 			time.sleep(2)  # Delay of 2 seconds
@@ -51,3 +50,5 @@ class UltraSonicSensor(Thread, Observable):
 		return self.distance
 	def clearDistance(self):
 		self.distance = UltraSonicSensor.DISTANCE_DEFAULT
+    def stop(self):
+        self.cont = False
