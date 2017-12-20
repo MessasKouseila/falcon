@@ -40,7 +40,7 @@ class UltraSonicSensor(Thread, Observable):
 			# Multiply pulse duration by 17150 to get distance
 			distance = pulse_duration * 17150
 			distance = round(distance, 2)  # Round to two decimal points
-            self.setDistance(distance)
+			self.setDistance(distance)
 			self.update_observers(distance)
 
 	def setDistance(self,distance):
@@ -50,5 +50,5 @@ class UltraSonicSensor(Thread, Observable):
 		return self.distance
 	def clearDistance(self):
 		self.distance = UltraSonicSensor.DISTANCE_DEFAULT
-    def stop(self):
-        self.cont = False
+	def stop(self):
+		self.cont = False
