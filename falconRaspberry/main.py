@@ -3,7 +3,7 @@
 from vehicle.vehicleFactory import VehicleFactory
 from agent.agent import Agent
 import time
-vehi = vehicleFactory.createVehicle()
+vehi = VehicleFactory().createVehicle()
 agent = Agent(vehi)
 agent.advance()
 time.sleep(40)

@@ -14,7 +14,7 @@ class UltraSonicSensor(Thread, Observable):
 		self.echo = echo
 		self.distance = UltraSonicSensor.DISTANCE_DEFAULT
 		Observable.__init__(self)
-        self.cont = True
+                self.cont = True
 
 	def run(self):
 		GPIO.setmode(GPIO.BOARD)

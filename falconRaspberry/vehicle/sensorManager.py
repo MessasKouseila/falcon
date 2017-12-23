@@ -1,5 +1,5 @@
-from vehicle.sensor.sensorEnum from SensorEnum
-from vehicle.sensor.observeObstacle from ObserveObstacle
+from sensor.sensorEnum import SensorEnum
+from sensor.observeObstacle import ObserveObstacle
 from command import Command
 class SensorManager(ObserveObstacle):
 
@@ -7,14 +7,14 @@ class SensorManager(ObserveObstacle):
     DOWN = "down"
     DISTANCE_MIN_UP = 20
     DISTANCE_MIN_DOWN = 20
-    def __init__(vehiculeCommand):
+    def __init__(self ,vehiculeCommand):
         self.vehiculeCommand = vehiculeCommand
         self.up = ObserverObstacle(SensorEnum.ULTRASONIC_UP,self,SensorManager.UP)
         self.down = ObserverObstacle(SensorEnum.ULTRASONIC_DOWN,self,SensorManager.DOWN)
-        self.up.start()
-        self.down.start()
+        SensorEnum.ULTRASONIC_UP.start()
+        SensorEnum.ULTRASONIC_DOWN.start()
     
-    def update(self,name,distance)
+    def update(self,name,distance):
         if name == SensorManager.UP:
             if distance > SensorManager.DISTANCE_MIN_UP:
                 self.vehiculeCommand.update(Command.NONE_OBSTACLE_FRONT)
@@ -29,12 +29,12 @@ class SensorManager(ObserveObstacle):
 
 
 class ObserverObstacle(ObserveObstacle):
-    def __init__(sensor,sensorManager,name)
+    def __init__(self,sensor,sensorManager,name):
         ObserveObstacle.__init__(self)
         self.sensor = sensor
         self.sensorManager = sensorManager
-        self.name = self.name
+        self.name = name
         sensor.register(self)
 
-    def update(self,distance)
-        self.sensorManager(name,distance)
+    def update(self,distance):
+        self.sensorManager.update(self.name,distance)

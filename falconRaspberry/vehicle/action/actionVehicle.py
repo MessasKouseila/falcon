@@ -8,6 +8,7 @@ class ActionVehicle(object):
     def __init__(self):
         Thread.__init__(self)
         self.isStop = False
+	self.isFinish = True
     def stop(self):
         self.isStop = True
         while not self.isFinish:
