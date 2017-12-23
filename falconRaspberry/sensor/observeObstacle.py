@@ -5,5 +5,5 @@ class ObserveObstacle(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def update(self, *args, **kwargs):
+    def update(self, distance):
         pass

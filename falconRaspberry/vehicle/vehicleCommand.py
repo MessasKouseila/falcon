@@ -1,5 +1,6 @@
 from wheelEnum import WheelEnum
 from vehicle.command import Command
+from vehicle.action.actionVehicle import ActionVehicle
 from vehicle.action.advance import Advance
 from vehicle.action.advanceLeft import AdvanceLeft
 from vehicle.action.advanceRight import AdvanceRight
@@ -40,7 +41,7 @@ class VehicleCommand(object):
     def __noneObstacleUp(self):
         self.canAdvance = True
     def __obstacleDown(self):
-        if self.actionRunning != None and self.actionRunning.isReverse():
+        if self.actionRunning != None and isinstance(self.actionRunning,ActionVehicle) and self.actionRunning.isReverse():
                self.actionRunning.stop()
         self.canReverse =  False
     def __noneObstacleDown(self):
@@ -49,6 +50,6 @@ class VehicleCommand(object):
         if self.actionRunning != None:
             self.actionRunning.stop()
         self.actionRunning = self.action[command]()
-        if (self.canAdvance and self.actionRunning.isAdvance()) or (self.canReverse and self.actionRunning.isReverse()):
+        if isinstance(self.actionRunning,ActionVehicle) and (self.canAdvance and self.actionRunning.isAdvance()) or (self.canReverse and self.actionRunning.isReverse()):
             self.actionRunning.run()
             

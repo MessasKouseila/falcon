@@ -1,8 +1,9 @@
 from vehicle.wheelEnum import WheelEnum
 from actionVehicle import ActionVehicle
+from threading import Thread
 import time
 
-class Brake(ActionVehicle):
+class Brake(Thread,ActionVehicle):
     def __init__(self):
         ActionVehicle.__init__(self)
     def run(self):
