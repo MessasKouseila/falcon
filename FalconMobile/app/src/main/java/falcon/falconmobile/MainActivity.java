@@ -10,40 +10,62 @@ import android.widget.Toast;
 import com.github.niqdev.mjpeg.DisplayMode;
 import com.github.niqdev.mjpeg.Mjpeg;
 import com.github.niqdev.mjpeg.MjpegSurfaceView;
+import com.squareup.okhttp.HttpUrl;
 
 import io.github.controlwear.virtual.joystick.android.JoystickView;
 
 
 public class MainActivity extends AppCompatActivity {
 
-
     private static final int TIMEOUT = 5;
+    private static final String BASE_URL = "http://192.168.0.16:5000/";
+    private static final String URL_STOP = BASE_URL + "stop";
+
     MjpegSurfaceView mjpegView;
     private TextView mTextViewAngleLeft;
     private TextView mTextViewStrengthLeft;
 
-// ok http
+
+    private String actualDirection = "stop";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         mTextViewAngleLeft = (TextView) findViewById(R.id.textView_angle_left);
         mTextViewStrengthLeft = (TextView) findViewById(R.id.textView_strength_left);
-
         mjpegView = (MjpegSurfaceView) findViewById(R.id.mjpegViewDefault);
+
 
         JoystickView joystickLeft = (JoystickView) findViewById(R.id.joystickView_left);
         joystickLeft.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
-                mTextViewAngleLeft.setText(angle + "°");
-                mTextViewStrengthLeft.setText(strength + "%");
+
+                if (Direction.getDirection(angle).value != actualDirection) {
+
+                    actualDirection = Direction.getDirection(angle).value;
+
+                    HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL + actualDirection).newBuilder();
+                    urlBuilder.addQueryParameter("strength", String.valueOf(strength));
+                    String url_request = urlBuilder.build().toString();
+
+                    (new Client(getApplicationContext())).execute(url_request);
+
+
+                    mTextViewAngleLeft.setText(angle + "°");
+                    mTextViewStrengthLeft.setText(strength + "%");
+
+                    if (angle == 0) {
+                        (new Client(getApplicationContext())).execute(URL_STOP);
+                    }
+                }
+
             }
         });
     }
-
 
     private DisplayMode calculateDisplayMode() {
         int orientation = getResources().getConfiguration().orientation;
@@ -78,6 +100,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadIpCam();
+        //loadIpCam();
     }
 }

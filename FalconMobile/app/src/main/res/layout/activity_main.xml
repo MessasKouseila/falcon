@@ -12,21 +12,24 @@
         android:id="@+id/mjpegViewDefault"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        stream:type="stream_default" />
+        stream:type="stream_default"
+        android:layout_alignParentTop="true" />
+
 
     <TextView
         android:id="@+id/textView_angle_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0°"/>
-
+        android:text="0°"
+        android:textColor="@color/colorAccent"/>
 
     <TextView
         android:id="@+id/textView_strength_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView_angle_left"
-        android:text="0%"/>
+        android:text="0%"
+        android:textColor="@color/colorAccent"/>
 
 
     <io.github.controlwear.virtual.joystick.android.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"
