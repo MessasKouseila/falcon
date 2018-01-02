@@ -18,7 +18,7 @@ import io.github.controlwear.virtual.joystick.android.JoystickView;
 public class MainActivity extends AppCompatActivity {
 
     private static final int TIMEOUT = 5;
-    private static final String BASE_URL = "http://192.168.0.16:5000/";
+    private static final String BASE_URL = "http://10.188.173.64:5000/";
     private static final String URL_STOP = BASE_URL + "stop";
 
     MjpegSurfaceView mjpegView;
@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextViewStrengthLeft;
 
 
-    private String actualDirection = "stop";
+    private String actualDirection = Direction.STOP.value;
+    private int actualSpeed = Speed.FIRST.value;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +45,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMove(int angle, int strength) {
 
-                if (Direction.getDirection(angle).value != actualDirection) {
+                if (Direction.getDirection(angle).value != actualDirection || Speed.getSpeed(strength).value != actualSpeed) {
 
                     actualDirection = Direction.getDirection(angle).value;
+                    actualSpeed = Speed.getSpeed(strength).value;
 
                     HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL + actualDirection).newBuilder();
-                    urlBuilder.addQueryParameter("strength", String.valueOf(strength));
+                    urlBuilder.addQueryParameter("strength", String.valueOf(actualSpeed));
                     String url_request = urlBuilder.build().toString();
 
                     (new Client(getApplicationContext())).execute(url_request);
