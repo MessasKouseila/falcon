@@ -15,12 +15,13 @@ class SensorManager(ObserveObstacle):
         SensorEnum.ULTRASONIC_DOWN.start()
     
     def update(self,name,distance):
+	print name + ":"+str(distance)
         if name == SensorManager.UP:
             if distance > SensorManager.DISTANCE_MIN_UP:
                 self.vehiculeCommand.update(Command.NONE_OBSTACLE_FRONT)
             else:
                  self.vehiculeCommand.update(Command.OBSTACLE_FRONT)
-        elif name == SensorManager.UP:
+        elif name == SensorManager.DOWN:
             if distance > SensorManager.DISTANCE_MIN_DOWN:
                 self.vehiculeCommand.update(Command.NONE_OBSTACLE_BOTTOM)
             else:

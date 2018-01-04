@@ -4,21 +4,25 @@ from threading import Thread
 import time
 
 class ReverseRight(Thread,ActionVehicle):
-    def __init__(self):
-        ActionVehicle.__init__(self)
-        self.isStop = False
+    def __init__(self,puissance=100):
+        ActionVehicle.__init__(self,puissance)
     def run(self):
-        self.isFinish = False
+        print "Run Reverse Right"
+        self.isCont = True
+        self.isStop = False
         WheelEnum.RIGHT_UP.reverse()
         WheelEnum.RIGHT_DOWN.reverse()
         WheelEnum.LEFT_UP.disableEngine()
         WheelEnum.LEFT_DOWN.disableEngine()
-        i = 60
-        while i <= 100 and (not self.isStop):
-            WheelEnum.RIGHT_UP.reverse(i)
-            WheelEnum.RIGHT_DOWN.reverse(i)
-            i = i + 10
-            time.sleep(0.1)
+        while self.puissanceActu <= self.puissance and (not self.isCont):
+            WheelEnum.RIGHT_UP.reverse(self.puissanceActu)
+            WheelEnum.RIGHT_DOWN.reverse(self.puissanceActu)
+            if self.puissanceActu < self.puissance:
+                self.puissanceActu = self.puissanceActu + 1
+            else:
+                self.puissanceActu = self.puissanceActu - 1
+            i = i + 1
+            time.sleep(0.5)
         self.isFinish = True
 
     def isAdvance(self):

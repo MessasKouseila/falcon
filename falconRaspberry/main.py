@@ -5,15 +5,6 @@ from agent.agent import Agent
 import time
 vehi = VehicleFactory().createVehicle()
 agent = Agent(vehi)
-agent.advance()
-time.sleep(40)
+time.sleep(10)
 agent.advance_left()
-time.sleep(40)
-agent.advance_right()
-time.sleep(40)
-agent.reverse()
-time.sleep(40)
-agent.reverse_left()
-time.sleep(40)
-agent.reverse_right()
-time.sleep(40)
+

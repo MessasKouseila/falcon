@@ -22,7 +22,7 @@ class UltraSonicSensor(Thread, Observable):
 		GPIO.setup(self.echo, GPIO.IN)
 		while self.cont:
 			GPIO.output(self.trig, False)  # Set TRIG as LOW
-			print "Waitng For Sensor To Settle"
+
 			time.sleep(2)  # Delay of 2 seconds
 
 			GPIO.output(self.trig, True)  # Set TRIG as HIGH

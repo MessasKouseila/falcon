@@ -34,22 +34,30 @@ class VehicleCommand(object):
         WheelEnum.RIGHT_UP.accelerate()
    
     def __obstacleUp(self):
-        if self.actionRunning != None and self.actionRunning.isAdvance():
+        print "Obstacle Up"
+        if self.actionRunning != None and self.actionRunning.isAdvance() and not self.actionRunning.isStop:
             self.actionRunning.stop()
         self.canAdvance = False
    
     def __noneObstacleUp(self):
         self.canAdvance = True
+        print "none obstacle Up"
     def __obstacleDown(self):
-        if self.actionRunning != None and isinstance(self.actionRunning,ActionVehicle) and self.actionRunning.isReverse():
+        print "ObstacleDown"
+        if self.actionRunning != None and isinstance(self.actionRunning,ActionVehicle) and self.actionRunning.isReverse() and not self.actionRunning.isStop:
                self.actionRunning.stop()
         self.canReverse =  False
     def __noneObstacleDown(self):
         self.canReverse = True
+        print "none obstacle Down"
     def update(self,command):
-        if self.actionRunning != None:
-            self.actionRunning.stop()
-        self.actionRunning = self.action[command]()
-        if isinstance(self.actionRunning,ActionVehicle) and (self.canAdvance and self.actionRunning.isAdvance()) or (self.canReverse and self.actionRunning.isReverse()):
+        action = self.action[command]()
+        if isinstance(action,ActionVehicle) and ((self.canAdvance and action.isAdvance()) or (self.canReverse and action.isReverse())) :
+            if self.actionRunning != None and not self.actionRunning.isStop:
+            	self.actionRunning.stop()
+       	    self.actionRunning = action
+            
+        if isinstance(self.actionRunning,ActionVehicle) and  self.actionRunning.isStop and ((self.canAdvance and self.actionRunning.isAdvance()) or (self.canReverse and self.actionRunning.isReverse())):
             self.actionRunning.run()
+	    print str(command) + ":running" 
             
