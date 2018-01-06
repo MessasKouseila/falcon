@@ -26,7 +26,7 @@ public enum Direction implements Serializable {
 
     public static Direction getDirection(float degree) {
 
-        if (degree >= 0) {
+        if (degree > 0) {
             if (degree <= 30 || degree >= 330) return Direction.RIGHT;
             if (degree > 30 && degree < 60) return Direction.UP_RIGHT;
             if (degree >= 60 && degree <= 120) return Direction.UP;

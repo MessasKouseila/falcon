@@ -2,9 +2,8 @@ package falcon.falconmobile;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
-import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -32,23 +31,30 @@ class Client extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... urls) {
 
-        try {
-            Request request = new Request.Builder().url(urls[0]).build();
-            Response response = null;
-            response = internal_client.newCall(request).execute();
+        Request request = new Request.Builder().url(urls[0]).build();
+        //Response response = null;
+        //response = internal_client.newCall(request).execute();
 
-            if (response.isSuccessful()) {
-                return response.body().string();
+        internal_client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void onResponse(Response response) throws IOException {
+
+            }
+        });
+
         return "command failed";
     }
 
-    @Override
+/*    @Override
     protected void onPostExecute(String result) {
-        Toast.makeText(this.ctx, "result", Toast.LENGTH_SHORT).show();
-    }
+        // j'affiche uniquement si y a une erreur
+        if (result.contains("command failed")) {
+            Toast.makeText(this.ctx, result, Toast.LENGTH_SHORT).show();
+        }
+    }*/
 }
