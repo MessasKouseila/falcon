@@ -5,9 +5,10 @@ import time
 
 class Brake(Thread,ActionVehicle):
     def __init__(self,puissance=100):
+        Thread.__init__(self)
         ActionVehicle.__init__(self,puissance)
     def run(self):
-        print "Run Brake"
+        print "Run Brake: "+str(self.puissance)
         self.isCont = True
         self.isStop = False
         WheelEnum.LEFT_UP.brake()

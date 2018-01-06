@@ -1,16 +1,14 @@
 from abc import ABCMeta, abstractmethod
-from threading import Thread
 from vehicle.wheelEnum import WheelEnum
 
 class ActionVehicle(object):
     __metaclass__ = ABCMeta
 
     def __init__(self,puissance=100):
-        Thread.__init__(self)
         self.isStop = True
         self.isCont = False
         self.isFinish = True
-        self.puissance = puissance
+        self.puissance = int(puissance)
         self.puissanceActu = 1
     def stop(self):
         print "Stopping"
@@ -32,5 +30,8 @@ class ActionVehicle(object):
     def isReverse(self):
         pass
 
-    def setPuissance(puissance):
+    def setPuissance(self,puissance):
         self.puissance = puissance
+        if self.isFinish:
+            return False
+        return True

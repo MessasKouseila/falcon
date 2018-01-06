@@ -5,16 +5,18 @@ import time
 
 class Advance(Thread,ActionVehicle):
     def __init__(self,puissance=100):
+        Thread.__init__(self)
         ActionVehicle.__init__(self,puissance)
     def run(self):
-        print "Run Advance"
+        print "Run Advance: "+str(self.puissance)
         self.isCont = True
         self.isStop = False
         WheelEnum.LEFT_UP.accelerate()
         WheelEnum.LEFT_DOWN.accelerate()
         WheelEnum.RIGHT_DOWN.accelerate()
         WheelEnum.RIGHT_UP.accelerate()
-        while self.puissanceActu != self.puissance and (not self.isCont):
+        while self.puissanceActu != self.puissance and ( self.isCont):
+            print "Advance Puissance: "+str(self.puissanceActu)
             WheelEnum.LEFT_UP.accelerate(self.puissanceActu)
             WheelEnum.LEFT_DOWN.accelerate(self.puissanceActu)
             WheelEnum.RIGHT_DOWN.accelerate(self.puissanceActu)

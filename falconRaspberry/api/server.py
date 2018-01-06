@@ -12,8 +12,8 @@ import socket
 import time
 import datetime
 from datetime import timedelta
-from vehicle.wheelEnum import WheelEnum
-from sensor.ultraSonicSensor import UltraSonicSensor
+from vehicle.vehicleFactory import VehicleFactory
+from agent.agent import Agent
 # renvoie l'ip sur lequel est executé le scripte.
 def getIp():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -23,9 +23,6 @@ def getIp():
     return ip
 
 
-moteur = WheelEnum()
-capteur = UltraSonicSensor(18, 16)
-
 # on recupere le repertoir courrant
 current_directory = os.getcwd()
 
@@ -33,29 +30,66 @@ current_directory = os.getcwd()
 # on cree une appllication flask
 app = Flask(__name__)
 
+vehi = VehicleFactory().createVehicle()
+agent = Agent(vehi)
 
 # test de connexion
 @app.route('/connexion', methods=['GET', 'POST'])
 def connexion():
-    capteur.start()
     return jsonify(results="Bienvenu dans l'interface web de falcon")
+@app.route('/stop', methods=['GET', 'POST'])
+def stop():
+    agent.brake(request.args.get('power'))
+    return jsonify(results="stop")
+
+@app.route('/up', methods=['GET', 'POST'])
+def up():
+    agent.advance(request.args.get('power'))
+    return jsonify(results="up")
 
 
-# fait avancé le robot pendant x secondes
-@app.route('/run', methods=['GET', 'POST'])
-def run():
-    distance = 30
-    while(distance > 10):
-        moteur.LEFT_DOWN.accelerate()
-        moteur.LEFT_UP.accelerate()
-        moteur.RIGHT_DOWN.accelerate()
-        moteur.RIGHT_UP.accelerate()
-        distance = capteur.getDistance()
-    # obstacle    
-    moteur.LEFT_DOWN.brake()
-    moteur.LEFT_UP.brake()
-    moteur.RIGHT_DOWN.brake()
-    moteur.RIGHT_UP.brake()
+@app.route('/down', methods=['GET', 'POST'])
+def down():
+    agent.reverse(request.args.get('power'))
+    return jsonify(results="down")
+
+
+
+@app.route('/right', methods=['GET', 'POST'])
+def right():
+    agent.advance_right(request.args.get('power'))
+    return jsonify(results="right")
+
+
+@app.route('/left', methods=['GET', 'POST'])
+def left():
+    agent.advance_left(request.args.get('power'))
+    return jsonify(results="left")
+
+@app.route('/up_right', methods=['GET', 'POST'])
+def up_right():
+    agent.advance_right(request.args.get('power'))
+    return jsonify(results="up_right")
+
+
+@app.route('/down_right', methods=['GET', 'POST'])
+def down_right():
+    agent.reverse_right(request.args.get('power'))
+    return jsonify(results="down_right")
+
+
+
+@app.route('/up_left', methods=['GET', 'POST'])
+def up_left():
+    agent.advance_left(request.args.get('power'))
+    return jsonify(results="up_left")
+
+
+@app.route('/down_left', methods=['GET', 'POST'])
+def down_left():
+    agent.reverse_left(request.args.get('power'))
+    return jsonify(results="down_left")
+
 
 if __name__ == "__main__":
     app.run(host=getIp(), port=5000)
