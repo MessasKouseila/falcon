@@ -79,11 +79,13 @@ def up_left():
 
 @app.route('/down_left', methods=['GET', 'POST'])
 def down_left():
+    power = request.args.get('power')
+    print (power)
     return jsonify(results="down_left")
 
-    
-
-
+@app.route('/photo', methods=['GET', 'POST'])
+def photo():
+    return jsonify(results="TF : " + "Analyse photo")
 
 if __name__ == "__main__":
     app.run(host=getIp(), port=5000)

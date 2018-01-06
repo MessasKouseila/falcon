@@ -30,7 +30,7 @@ public class ConfigureActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!configCam.getText().toString().isEmpty() && !configServer.getText().toString().isEmpty()) {
+                //if (!configCam.getText().toString().isEmpty() && !configServer.getText().toString().isEmpty()) {
                     Intent intent = new Intent();
                     final ArrayList<String> config = new ArrayList<String>();
                     config.add(configCam.getText().toString());
@@ -39,9 +39,9 @@ public class ConfigureActivity extends AppCompatActivity {
 
                     setResult(RESULT_OK, intent);
                     finish();
-                } else {
+                /*} else {
                     Toast.makeText(getApplicationContext(), "Veuillez remplir le formulaire", Toast.LENGTH_LONG).show();
-                }
+                }*/
             }
         });
     }

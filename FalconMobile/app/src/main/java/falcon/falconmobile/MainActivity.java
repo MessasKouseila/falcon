@@ -23,14 +23,14 @@ import io.github.controlwear.virtual.joystick.android.JoystickView;
 public class MainActivity extends AppCompatActivity {
 
     private static final int TIMEOUT = 5;
-    private static String BASE_URL_CAM = "http://192.168.0.2:8080";
-    private static String BASE_URL_SERVER = "http://192.168.0.3:5000";
+    private static String BASE_URL_CAM = "10.188.54.168:8080";
+    private static String BASE_URL_SERVER = "10.188.173.64:5000";
     private static final String URL_STOP = BASE_URL_SERVER + "/stop";
-    MjpegSurfaceView mjpegView;
+    private static boolean enabled = false;
+    private static MjpegSurfaceView mjpegView;
+    private static Mjpeg streamer;
     private TextView mTextViewAngleLeft;
     private TextView mTextViewStrengthLeft;
-
-
     private String actualDirection = Direction.STOP.value;
     private int actualSpeed = Speed.FIRST.value;
 
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     actualSpeed = Speed.getSpeed(strength).value;
 
                     HttpUrl.Builder urlBuilder = HttpUrl.parse("http://" + BASE_URL_SERVER + "/" + actualDirection).newBuilder();
-                    urlBuilder.addQueryParameter("strength", String.valueOf(actualSpeed));
+                    urlBuilder.addQueryParameter("power", String.valueOf(actualSpeed));
                     String url_request = urlBuilder.build().toString();
 
                     (new Client(getApplicationContext())).execute(url_request);
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                     mTextViewStrengthLeft.setText(strength + "%");
                 }
                 if (angle == 0) {
-                    (new Client(getApplicationContext())).execute(URL_STOP);
+                    (new Client(getApplicationContext())).execute("http://" + URL_STOP);
                 }
             }
         });
@@ -103,6 +103,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_camera) {
+            loadIpCam();
+            return true;
+        }
+
         if (id == R.id.action_photo) {
 
             HttpUrl.Builder urlBuilder = HttpUrl.parse("http://" + BASE_URL_SERVER + "/" + "photo").newBuilder();
@@ -127,9 +132,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1000 && resultCode == RESULT_OK) {
             try {
                 ArrayList<String> config = (ArrayList<String>) data.getSerializableExtra("config");
-                BASE_URL_CAM = config.get(0).toString();
-                BASE_URL_SERVER = config.get(1).toString();
-                //this.loadIpCam();
+                BASE_URL_CAM = config.get(0).toString().length() != 0 ? config.get(0).toString() : BASE_URL_CAM;
+                BASE_URL_SERVER = config.get(1).toString().length() != 0 ? config.get(1).toString() : BASE_URL_SERVER;
             } catch (Exception e) {
                 Toast.makeText(MainActivity.this, "Erreur lors de la configuration", Toast.LENGTH_SHORT).show();
             }
@@ -150,24 +154,26 @@ public class MainActivity extends AppCompatActivity {
      *
      */
     private void loadIpCam() {
+        if (enabled) {
+            Toast.makeText(this, "CAMERA IS RUNNING", Toast.LENGTH_LONG).show();
+        } else {
+            streamer = Mjpeg.newInstance();
 
-        Mjpeg.newInstance()
-                .credential("falcon", "falcon")
-                //.credential(getPreference(""), getPreference(""))
-                //.open("http://10.3.141.1:8080/html/cam_pic_new.php", TIMEOUT)
-                .open("http://" + BASE_URL_CAM + "/html/cam_pic_new.php", TIMEOUT)
-                .subscribe(
-                        inputStream -> {
-                            mjpegView.setSource(inputStream);
-                            mjpegView.setDisplayMode(calculateDisplayMode());
-                            mjpegView.showFps(true);
-                        },
-                        throwable -> {
-                            Log.e(getClass().getSimpleName(), "mjpeg error", throwable);
-                            Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
-                        });
+            streamer.credential("falcon", "falcon")
+                    .open("http://" + BASE_URL_CAM + "/html/cam_pic_new.php", TIMEOUT)
+                    .subscribe(
+                            inputStream -> {
+                                mjpegView.setSource(inputStream);
+                                mjpegView.setDisplayMode(calculateDisplayMode());
+                                mjpegView.showFps(true);
+                            },
+                            throwable -> {
+                                Log.e(getClass().getSimpleName(), "mjpeg error", throwable);
+                                Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
+                            });
+        }
+        enabled = true;
     }
-
 
     /**
      *
@@ -175,5 +181,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        try {
+            streamer.sendConnectionCloseHeader();
+            mjpegView.clearStream();
+            mjpegView.stopPlayback();
+        } catch (Exception e) {
+            enabled = false;
+            streamer = null;
+            mjpegView.invalidate();
+            mjpegView = (MjpegSurfaceView) findViewById(R.id.mjpegViewDefault);
+        }
     }
 }

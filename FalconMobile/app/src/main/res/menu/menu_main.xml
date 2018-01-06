@@ -4,7 +4,7 @@
     tools:context="com.example.loubia.tp_meteo.MainActivity">
     <item
         android:id="@+id/action_config"
-        android:icon="@drawable/add"
+        android:icon="@drawable/config"
         android:orderInCategory="99"
         android:title="@string/action_config"
         app:showAsAction="always" />
@@ -13,5 +13,11 @@
         android:icon="@drawable/photo"
         android:orderInCategory="99"
         android:title="@string/action_photo"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_camera"
+        android:icon="@drawable/camera"
+        android:orderInCategory="99"
+        android:title="@string/action_camera"
         app:showAsAction="always" />
 </menu>
