@@ -64,10 +64,12 @@ def uploadPhoto():
 
 @app.route('/localPhoto', methods=['GET', 'POST'])
 def localPhoto():
+    print("Appelle local")
     photo(LOCAL_IMAGE)
     
 @app.route('/photo', methods=['GET', 'POST'])
 def photo(image = None):
+    print("Appelle distant")
     PATH = ""
     result = {'banane' : 0, 'chaise' : 0, 'chaussure' : 0, 'main' : 0, 'smartphone' : 0}
     if image == None:

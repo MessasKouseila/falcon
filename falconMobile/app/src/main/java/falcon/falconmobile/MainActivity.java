@@ -23,8 +23,9 @@ import io.github.controlwear.virtual.joystick.android.JoystickView;
 public class MainActivity extends AppCompatActivity {
 
     private static final int TIMEOUT = 5;
-    private static String BASE_URL_CAM = "10.188.54.168:4032";
-    private static String BASE_URL_SERVER = "10.188.173.64:5000";
+    private static String BASE_URL_CAM = "10.3.141.1:8000";
+    private static String BASE_URL_SERVER = "10.3.141.1:5000";
+    private static String TF_SERVER = "10.3.141.1:4522";
     private static final String URL_STOP = BASE_URL_SERVER + "/stop";
     private static boolean enabled = false;
     private static MjpegSurfaceView mjpegView;
@@ -109,10 +110,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_photo) {
+            if (TF_SERVER.equals("10.3.141.1:4522")) {
+                // appel d'un server local pour l'analyse d'objet
+                HttpUrl.Builder urlBuilder = HttpUrl.parse("http://" + TF_SERVER + "/" + "localPhoto").newBuilder();
+                String url_request = urlBuilder.build().toString();
+                (new Client(getApplicationContext())).execute(url_request);
 
-            HttpUrl.Builder urlBuilder = HttpUrl.parse("http://" + BASE_URL_SERVER + "/" + "photo").newBuilder();
-            String url_request = urlBuilder.build().toString();
-            (new Client(getApplicationContext())).execute(url_request);
+            } else {
+                // appel du server tensorflow distant
+                HttpUrl.Builder urlBuilder = HttpUrl.parse("http://" + TF_SERVER + "/" + "photo").newBuilder();
+                String url_request = urlBuilder.build().toString();
+                (new Client(getApplicationContext())).execute(url_request);
+            }
             return true;
         }
 
@@ -134,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<String> config = (ArrayList<String>) data.getSerializableExtra("config");
                 BASE_URL_CAM = config.get(0).toString().length() != 0 ? config.get(0).toString() : BASE_URL_CAM;
                 BASE_URL_SERVER = config.get(1).toString().length() != 0 ? config.get(1).toString() : BASE_URL_SERVER;
+                TF_SERVER = BASE_URL_SERVER.split(":")[0] + ":4522";
             } catch (Exception e) {
                 Toast.makeText(MainActivity.this, "Erreur lors de la configuration", Toast.LENGTH_SHORT).show();
             }
@@ -159,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             streamer = Mjpeg.newInstance();
 
-            streamer.credential("falcon", "falcon")
+            streamer//.credential("falcon", "falcon")
                     .open("http://" + BASE_URL_CAM + "/html/cam_pic_new.php", TIMEOUT)
                     .subscribe(
                             inputStream -> {
