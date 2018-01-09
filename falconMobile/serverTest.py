@@ -66,9 +66,13 @@ def uploadPhoto():
 def localPhoto():
     print("Appelle local")
     photo(LOCAL_IMAGE)
-    
 @app.route('/photo', methods=['GET', 'POST'])
 def photo(image = None):
+    time.sleep(5)
+    return jsonify('')
+        
+@app.route('/photo1', methods=['GET', 'POST'])
+def photo1(image = None):
     print("Appelle distant")
     PATH = ""
     result = {'banane' : 0, 'chaise' : 0, 'chaussure' : 0, 'main' : 0, 'smartphone' : 0}
