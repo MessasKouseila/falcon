@@ -8,6 +8,7 @@ from vehicle.action.reverse import Reverse
 from vehicle.action.reverseLeft import ReverseLeft
 from vehicle.action.reverseRight import ReverseRight
 from vehicle.action.brake import Brake
+from vehicle.action.disableMoter import DisableMoter
 import threading
 
 def synchronized_method(method):
@@ -39,7 +40,8 @@ class VehicleCommand(object):
         Command.OBSTACLE_BOTTOM: self.__obstacleDown,
         Command.NONE_OBSTACLE_FRONT: self.__noneObstacleUp,
         Command.NONE_OBSTACLE_BOTTOM: self.__noneObstacleDown,
-        Command.BRAKE: Brake
+        Command.BRAKE: Brake,
+        Command.DISABLE_MOTER:DisableMoter
         } 
         self.actionRunning = None       
     def __accelerate(self):
@@ -78,7 +80,7 @@ class VehicleCommand(object):
             action = self.action[command]()
         else:
             action = self.action[command](puissance)
-        if isinstance(action,ActionVehicle) and ((self.canAdvance and action.isAdvance()) or (self.canReverse and action.isReverse())) : 
+        if isinstance(action,ActionVehicle) and ((self.canAdvance and action.isAdvance()) or (self.canReverse and action.isReverse()) or (not action.isAdvance() and not action.isReverse()) ) : 
             if type(action) == type(self.actionRunning):
                 if not self.actionRunning.setPuissance(puissance):
                     self.actionRunning.stop()
@@ -90,8 +92,8 @@ class VehicleCommand(object):
                     self.actionRunning.stop()
                     del(self.actionRunning)
                 self.actionRunning = action
-            
-        if isinstance(self.actionRunning,ActionVehicle) and  self.actionRunning.isStop and ((self.canAdvance and self.actionRunning.isAdvance()) or (self.canReverse and self.actionRunning.isReverse())):
+        
+        if isinstance(self.actionRunning,ActionVehicle) and  self.actionRunning.isStop and ((self.canAdvance and self.actionRunning.isAdvance()) or (self.canReverse and self.actionRunning.isReverse()) or (not self.actionRunning.isAdvance() and not self.actionRunning.isReverse()) ):
             self.actionRunning.start()
             while self.actionRunning.isStop:
                 pass

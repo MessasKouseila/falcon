@@ -22,4 +22,6 @@ class Agent(object):
         self.vehicle.update(Command.REVERSE_RIGHT,puissane)
     def brake(self,puissane=100):
         self.vehicle.update(Command.BRAKE,puissane)
+    def disableMoter(self,puissane=100):
+        self.vehicle.update(Command.DISABLE_MOTER,puissane)
         

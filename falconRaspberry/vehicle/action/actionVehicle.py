@@ -15,10 +15,7 @@ class ActionVehicle(object):
         self.isCont = False
         while not self.isFinish:
             pass
-        WheelEnum.LEFT_UP.disableEngine()
-        WheelEnum.LEFT_DOWN.disableEngine()
-        WheelEnum.RIGHT_UP.disableEngine()
-        WheelEnum.RIGHT_DOWN.disableEngine()
+        self.disableMoter()
         self.isStop = True
         print "Stopped"
     
@@ -29,7 +26,11 @@ class ActionVehicle(object):
     @abstractmethod
     def isReverse(self):
         pass
-
+    def disableMoter(self):
+        WheelEnum.LEFT_UP.disableEngine()
+        WheelEnum.LEFT_DOWN.disableEngine()
+        WheelEnum.RIGHT_UP.disableEngine()
+        WheelEnum.RIGHT_DOWN.disableEngine()
     def setPuissance(self,puissance):
         self.puissance = puissance
         if self.isFinish:

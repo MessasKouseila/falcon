@@ -89,7 +89,10 @@ def up_left():
 def down_left():
     agent.reverse_left(request.args.get('power'))
     return jsonify(results="down_left")
-
+@app.route('/disable_moter', methods=['GET', 'POST'])
+def disableMoter():
+    agent.disableMoter(request.args.get('power'))
+    return jsonify(results="Moter disabled")
 
 if __name__ == "__main__":
     app.run(host=getIp(), port=5000)

@@ -10,3 +10,4 @@ class Command:
     NONE_OBSTACLE_FRONT = 9
     NONE_OBSTACLE_BOTTOM = 10
     BRAKE = 11
+    DISABLE_MOTER = 12
