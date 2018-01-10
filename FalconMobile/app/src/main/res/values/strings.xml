@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">FalconMobile</string>
-    <string name="cam">ip:port camera</string>
-    <string name="server">ip:port Server</string>
-    <string name="action_config">configuration</string>
-    <string name="action_photo">Photo</string>
-    <string name="action_camera">Streaming</string>
-</resources>
