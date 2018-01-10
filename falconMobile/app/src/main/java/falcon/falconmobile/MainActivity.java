@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextViewStrengthLeft;
     private String actualDirection = Direction.STOP.value;
     private int actualSpeed = Speed.FIRST.value;
-    private static long times = System.currentTimeMillis();
     /**
      * @param savedInstanceState
      */
@@ -56,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
         joystickLeft.setOnMoveListener(new JoystickView.OnMoveListener() {
             @Override
             public void onMove(int angle, int strength) {
-                long newTime = System.currentTimeMillis() - times;
-                if (newTime > 10000 && (Direction.getDirection(angle).value != actualDirection || Speed.getSpeed(strength).value != actualSpeed)) {
+                if (Direction.getDirection(angle).value != actualDirection || Speed.getSpeed(strength).value != actualSpeed) {
 
                     actualDirection = Direction.getDirection(angle).value;
                     actualSpeed = Speed.getSpeed(strength).value;
@@ -67,14 +65,13 @@ public class MainActivity extends AppCompatActivity {
                     String url_request = urlBuilder.build().toString();
 
                     (new Client(getApplicationContext())).execute(url_request);
-                    times = System.currentTimeMillis();
 
 
                     mTextViewAngleLeft.setText(angle + "°");
                     mTextViewStrengthLeft.setText(strength + "%");
-                    if (angle == 0) {
-                        (new Client(getApplicationContext())).execute("http://" + URL_STOP);
-                    }
+                }
+                if (angle == 0 && !actualDirection.equals("stop")) {
+                    (new Client(getApplicationContext())).execute("http://" + URL_STOP);
                 }
             }
         });

@@ -2,10 +2,6 @@
 # coding: utf-8
 
 from flask import Flask, request, jsonify
-from urllib import urlopen
-from pandas.compat import StringIO
-from werkzeug.utils import secure_filename
-import Image
 import json
 import os
 import sys
@@ -16,7 +12,6 @@ import time
 import datetime
 from datetime import timedelta
 import tensorflow as tf
-from collections import OrderedDict
 
 
 # renvoie l'ip sur lequel est executé le scripte.
@@ -38,47 +33,9 @@ PATH_IMAGE = LOCAL_IMAGE
 # on cree une appllication flask
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+label_lines = ''
 
-
-def uploadPhoto():
-    url = "http://10.3.141.1:8000/html/cam_pic.php"
-    formats = {'image/jpeg': 'JPEG', 'image/png': 'PNG', 'image/gif': 'GIF'}
-
-    response = urlopen(url)
-    image_type = response.info().get('Content-Type')
-    
-    try:
-        format = formats[image_type]
-    except KeyError:
-        raise ValueError('Not a supported image format')
-
-    file = StringIO(response.read())
-    img = Image.open(file)
-
-    filename = secure_filename(url.rpartition('/')[-1])
-    filename = filename + ".jpeg"
-    img.save(os.path.join(app.config['UPLOAD_FOLDER'], filename), format=format)
-
-    image_path = UPLOAD_FOLDER + filename
-    return image_path
-
-@app.route('/localPhoto', methods=['GET', 'POST'])
-def localPhoto():
-    print("Appelle local")
-    photo(LOCAL_IMAGE)
-        
-@app.route('/photo', methods=['GET', 'POST'])
-def photo(image = None):
-    print("Appelle distant")
-    PATH = ""
-    result = {'banane' : 0, 'chaise' : 0, 'chaussure' : 0, 'main' : 0, 'smartphone' : 0}
-    if image == None:
-        PATH = uploadPhoto()
-    else:
-        PATH = image
-
-    image_data = tf.gfile.FastGFile(PATH, 'rb').read()
-
+def init_tf():
     # holt labels aus file in array 
     label_lines = [line.rstrip() for line 
                     in tf.gfile.GFile(TF_PATH + "tf_files/retrained_labels.txt")]
@@ -88,7 +45,25 @@ def photo(image = None):
     with tf.gfile.FastGFile(TF_PATH + "tf_files/retrained_graph.pb", 'rb') as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
-        _ = tf.import_graph_def(graph_def, name='')	
+        _ = tf.import_graph_def(graph_def, name='')
+init_tf()
+
+@app.route('/localPhoto', methods=['GET', 'POST'])
+def localPhoto():
+    print("Appelle local")
+    photo(LOCAL_IMAGE)
+        
+@app.route('/photo', methods=['GET', 'POST'])
+def photo(image = None):
+    PATH = ""
+    result = {'banane' : 0, 'chaise' : 0, 'chaussure' : 0, 'main' : 0, 'smartphone' : 0}
+    if image == None:
+        return jsonify(results="TF : Aucun Objet")
+    else:
+        PATH = image
+
+    image_data = tf.gfile.FastGFile(PATH, 'rb').read()
+
 
     with tf.Session() as sess:
         softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
